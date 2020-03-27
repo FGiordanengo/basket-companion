@@ -18,6 +18,9 @@ h1 {
 .flex {
     display:flex;
 }
+.hidden {
+    display:none;
+}
 .left, .right {
     margin: 0 auto;
 }

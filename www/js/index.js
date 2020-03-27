@@ -14,7 +14,12 @@ buttonTeam.addEventListener('click',function(){
     if(inputTeam.length > 3){
         addTeam(inputTeam);
     }
-    console.log(inputTeam);
+    // console.log(inputTeam);
+});
+
+document.querySelector(".form").addEventListener("submit", function(event){
+    event.preventDefault()
+    document.querySelector(".inputTeam").value = "";
 });
 
 var a = document.querySelectorAll(".addScore");
@@ -50,7 +55,7 @@ function convertDate(timeStamp){
 }
 
 function addTeam(inputTeam){
-    console.log(inputTeam);
+    // console.log(inputTeam);
     db.transaction(function(tx) {
         tx.executeSql('INSERT INTO team (name) VALUES(?)', [inputTeam]);
     });
@@ -59,7 +64,7 @@ function addTeam(inputTeam){
 function addScore(equipeId, point) {
     // document.querySelector(className).addEventListener('click', function() {
         db.transaction(function(tx) {
-        tx.executeSql('INSERT INTO matchLog (datetime, teamId, score)VALUES (?,?,?)', [Date.now(), equipeId, point]);
+        tx.executeSql('INSERT INTO matchLog (datetime, teamId, score)VALUES (?,?,?)', [Date.now()/1000, equipeId, point]);
         // tx.executeSql('SELECT score FROM matchLog WHERE teamId = 1', [], querySuccess);
         });
     // });
@@ -84,7 +89,50 @@ document.addEventListener('deviceready', function(event) {
         db = window.sqlitePlugin.openDatabase({name: 'basketballcompanion.db', location: 'default'});
         console.log('Opening mobile (plugin) database')
     }
+//  Selection team
+    db.transaction(function(tx) {
+        tx.executeSql('SELECT id, name FROM team', [], function(tx, result) {
     
+            var selectElement = document.querySelector('#team1');
+            var optionElement = document.querySelector('.t1');
+            for(var i = 0; i < result.rows.length; i++) {
+                var newOptionElement = optionElement.cloneNode(true);
+                selectElement.appendChild(newOptionElement);
+                console.log(result)
+                newOptionElement.innerHTML = result.rows.item(i).name;
+                newOptionElement.setAttribute('value', result.rows.item(i).id);
+            }
+            var selectElement2 = document.querySelector('#team2');
+            var optionElement2 = document.querySelector('.t2');
+            for(var i = 0; i < result.rows.length; i++) {
+                var newOptionElement2 = optionElement2.cloneNode(true);
+                selectElement2.appendChild(newOptionElement2);
+                console.log(result)
+                newOptionElement2.innerHTML = result.rows.item(i).name;
+                newOptionElement2.setAttribute('value', result.rows.item(i).id);
+            }
+        });
+    });
+// FAIRE UNE FCT POUR LES DEUX ONCHANGE SUIVANTS
+    document.querySelector('#team1').addEventListener('change',function(){
+        var selectedValue1 = this.value;
+        var z = document.querySelectorAll(".addScore1");
+        for (i = 0; i < a.length; i++) {
+            z[i].setAttribute('data-team', selectedValue1);
+        };
+    });
+    document.querySelector('#team2').addEventListener('change',function(){
+        var selectedValue2 = this.value;
+        var y = document.querySelectorAll(".addScore2");
+        for (i = 0; i < a.length; i++) {
+            y[i].setAttribute('data-team', selectedValue2);
+        };
+    });
+
+    // FIN Selection team
+
+
+
     db.transaction(function(tx) {
         
         tx.executeSql('CREATE TABLE IF NOT EXISTS matchLog (id INTEGER PRIMARY KEY, datetime DATETIME, score NUMERIC, teamId INTEGER, FOREIGN KEY(teamId) REFERENCES team(id))');
@@ -99,16 +147,18 @@ document.addEventListener('deviceready', function(event) {
       });
 
     db.transaction(function(tx) {
-    tx.executeSql('SELECT datetime, score, teamId, score FROM matchLog', [], function(tx, result) {
+    tx.executeSql('SELECT name, name as teamName, datetime(datetime, "unixepoch", "localtime") as isodate, score, teamId, score FROM matchLog INNER JOIN team ON matchLog.teamId = team.id', [], function(tx, result) {
 
-        var baseElement = document.querySelector('.historique');
+        var baseElement = document.querySelector('#log');
         for(var i = 0; i < result.rows.length; i++) {
             var cloneElement = baseElement.cloneNode(true);
             document.querySelector('.app').appendChild(cloneElement);
             // console.log(result)
+            // cloneElement.querySelector("#log")[i].removeAttribute("id"); 
             // cloneElement.querySelector('.team').innerHTML = result.rows.item(i).teamId;
             cloneElement.querySelector('.score').innerHTML = result.rows.item(i).score;
-            cloneElement.querySelector('.date').innerHTML = convertDate(result.rows.item(i).datetime);
+            cloneElement.querySelector('.date').innerHTML = convertDate(result.rows.item(i).isodate);
+            cloneElement.querySelector('.showTeam').innerHTML = result.rows.item(i).teamName;
         }
     });
     }, function(error) {
@@ -118,17 +168,15 @@ document.addEventListener('deviceready', function(event) {
     });
     db.transaction(function(tx) {
 
-    tx.executeSql('SELECT name, name as teamName FROM team INNERJOIN matchLog ON matchLog.teamId = team.id', [], function(tx, result) {
-        var baseElement = document.querySelector('.historique');
-        for(var i = 0; i < result.rows.length; i++) {
-            var cloneElement = baseElement.cloneNode(true);
-            document.querySelector('.app').appendChild(cloneElement);
-            console.log(result)
-            cloneElement.querySelector('.team').innerHTML = result.rows.item(i).teamId;
-
-        }
-
-    });
+    // tx.executeSql('SELECT name, name as teamName FROM team INNER JOIN matchLog ON matchLog.teamId = team.id', [], function(tx, result) {
+    //     var baseElement = document.querySelector('.historique');
+    //     for(var i = 0; i < result.rows.length; i++) {
+    //         var cloneElement = baseElement.cloneNode(true);
+    //         document.querySelector('.app').appendChild(cloneElement);
+    //         // console.log(result.rows.item(i).teamName)
+    //         cloneElement.querySelector('.showTeam').innerHTML = result.rows.item(i).teamName;
+    //     }
+    // });
     }, function(error) {
     console.log('Transaction ERROR: ' + error.message);
     }, function() {

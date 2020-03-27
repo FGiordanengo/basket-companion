@@ -19,28 +19,27 @@
                 <div class="left">
                     <!-- Il faut créer un select, faire une boucle sur les options du select avec les différentes valeurs  -->
                     <!-- <h2><input type="text" name="equipe1" id="equipe1" placeholder="Equipe 1"></h2> -->
-                    <!-- <select name="" id="">
-                        <option value=""></option>
-                    </select> -->
-                    <h2 class="team">Equipe 1</h2>
+                    <select id="team1">
+                        <option class="t1">Choisir une equipe</option>
+                    </select>
                     <p><span class="score1"></span></p>
-                    <button id="add1ToTeam1" class="addScore" data-team="1" data-score="1">1</button>
-                    <button id="add2ToTeam1" class="addScore" data-team="1" data-score="2">2</button>
-                    <button id="add3ToTeam1" class="addScore" data-team="1" data-score="3">3</button>
+                    <button id="add1ToTeam1" class="addScore addScore1" data-score="1">1</button>
+                    <button id="add2ToTeam1" class="addScore addScore1" data-score="2">2</button>
+                    <button id="add3ToTeam1" class="addScore addScore1" data-score="3">3</button>
                 </div>
                 <div class="right">
                     <!-- <h2><input type="text" name="equipe2" id="equipe2" placeholder="Equipe 2"></h2> -->
-                    <h2 class="team">Equipe 2</h2 class="team">
-                    <p><span class="score2"></span></p>
-                    <button id="add1ToTeam2" class="addScore" data-team="2" data-score="1">1</button>
-                    <button id="add2ToTeam2" class="addScore" data-team="2" data-score="2">2</button>
-                    <button id="add3ToTeam2" class="addScore" data-team="2" data-score="3">3</button>
-
+                    <select id="team2">
+                        <option value="" class="t2">Choisir une equipe</option>
+                    </select>                    <p><span class="score2"></span></p>
+                    <button id="add1ToTeam2" class="addScore addScore2" data-score="1">1</button>
+                    <button id="add2ToTeam2" class="addScore addScore2" data-score="2">2</button>
+                    <button id="add3ToTeam2" class="addScore addScore2" data-score="3">3</button>
                 </div>
             </div>
-            <div class="historique">
+            <div >
                 <ul>
-                    <li> <span class="team"></span> Points : <span class="score"></span> <span class="date"></span></li>
+                    <li id="log" class=""> <span class="showTeam"></span> Points : <span class="score"></span> <span class="date"></span></liclass="hidden">
                 </ul>
             </div>
             <!-- <div id="deviceready" class="blink">
